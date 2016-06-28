@@ -1,0 +1,614 @@
+\documentclass[8pt]{beamer}
+\usepackage{etex}
+\usetheme{Warsaw}
+\usecolortheme{whale}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{lmodern}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{picture}
+\usepackage{bussproofs}
+\usepackage{hyperref}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
+\newcommand{\itembase}{\setlength{\itemsep}{0pt}}
+\newcommand{\eg}{{\it e.g., }}
+\newcommand{\ie}{{\it i.e., }}
+
+% All the pretty colors go here
+\definecolor{myGreen}{rgb}{0,1,0}
+\definecolor{myRed}{rgb}{1,0,0}
+\newcommand{\clb}{\color{blue}}
+\newcommand{\clr}{\color{myRed}}
+\newcommand{\clg}{\color{myGreen}}
+\newcommand{\clbl}{\color{black}}
+
+
+%\usepackage{bibentry}
+\setbeamercolor{background canvas}{bg=gray}
+\setbeamertemplate{footline}[page number]{}
+
+
+\newenvironment<>{varblock}[2][.9\textwidth]{%
+  \setlength{\textwidth}{#1}
+  \begin{actionenv}#3%
+    \def\insertblocktitle{#2}%
+    \par%
+    \usebeamertemplate{block begin}}
+  {\par%
+    \usebeamertemplate{block end}%
+  \end{actionenv}}
+
+\makeatletter
+\pgfdeclareverticalshading[black,bg]{bmb@shadow}{200cm}{%
+  color(0bp)=(black!25); color(4bp)=(black!50!bg); color(8bp)=(black!50!bg)}
+\pgfdeclareradialshading[black,bg]{bmb@shadowball}{\pgfpointorigin}{%
+  color(0bp)=(black!50!bg); color(4bp)=(black!25)}
+\pgfdeclareradialshading[black,bg]{bmb@shadowballlarge}{\pgfpointorigin}{%
+  color(0bp)=(black!50!bg); color(4bp)=(black!50!bg); color(8bp)=(black!25)}
+
+\def\insertsectionnavigation#1{%
+  \hbox to #1{\vbox{{\usebeamerfont{section in head/foot}%
+     \usebeamercolor[fg]{section in head/foot}%
+     \def\slideentry##1##2##3##4##5##6{}%
+     \def\sectionentry##1##2##3##4##5{%
+       \ifnum##5=\c@part%
+       \def\insertsectionhead{##2\hskip1em}%
+       \def\insertsectionheadnumber{##1}%
+       \def\insertpartheadnumber{##5}%
+         \hyperlink{Navigation##3}{%
+             \ifnum\c@section=##1%
+               {\usebeamertemplate{section in head/foot}}%
+             \else%
+               {\usebeamertemplate{section in head/foot shaded}}%
+             \fi%
+         }\par
+       \fi}%
+       \parbox[c][0cm][c]{.5\paperwidth}{%
+       \begin{multicols}{2}
+       \dohead
+       \end{multicols}}\space}
+     }%
+  \hfil}%
+}
+
+\def\insertsubsectionnavigation#1{%
+  \hbox to #1{%
+    \vbox{{%
+      \usebeamerfont{subsection in head/foot}\usebeamercolor[fg]{subsection in head/foot}%
+      \vskip0.5625ex%
+      \beamer@currentsubsection=0%
+      \def\sectionentry##1##2##3##4##5{}%
+      \def\slideentry##1##2##3##4##5##6{\ifnum##6=\c@part\ifnum##1=\c@section%
+        \ifnum##2>\beamer@currentsubsection%
+        \beamer@currentsubsection=##2%
+        \def\insertsubsectionhead{##5}%
+        \def\insertsectionheadnumber{##1}%
+        \def\insertsubsectionheadnumber{##2}%
+        \def\insertpartheadnumber{##6}%
+        \beamer@link(##4){%
+              \ifnum\c@subsection=##2%
+                {\usebeamertemplate{subsection in head/foot}}%
+              \else%
+                {\usebeamertemplate{subsection in head/foot shaded}}%
+              \fi\hfill}\par
+        \fi\fi\fi}%
+       \hspace*{0.5em}\parbox[c][0cm][c]{\dimexpr.5\paperwidth-1em\relax}{%
+       \begin{multicols}{2}
+       \dohead\vskip0.5625ex\end{multicols}
+       }\space
+   }\hfil
+}}}
+
+\setbeamertemplate{navigation symbols}{}
+%\setbeamertemplate{blocks}[rounded][shadow=false]
+%\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true]
+\setbeamertemplate{frametitle}[default][colsep=-4bp,rounded=false,shadow=false]
+
+\setbeamertemplate{headline}
+{%
+  \leavevmode\@tempdimb=2.4375ex%
+  \ifnum\beamer@subsectionmax<\beamer@sectionmax%
+    \multiply\@tempdimb by\beamer@sectionmax%
+  \else%
+    \multiply\@tempdimb by\beamer@subsectionmax%
+  \fi%
+  \ifdim\@tempdimb>0pt%
+    \advance\@tempdimb by 1.125ex%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=0.5\@tempdimb,dp=2ex]{section in head/foot}%
+      \vbox to0.5\@tempdimb{\vfill\insertsectionnavigation{.5\paperwidth}\vfill}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=0.5\@tempdimb,dp=2ex]{subsection in head/foot}%
+      \vbox to0.5\@tempdimb{\vfill\insertsubsectionnavigation{.5\paperwidth}\vfill}%
+    \end{beamercolorbox}%
+  \fi%
+}
+\makeatother
+
+%\usepackage{beamerposter}
+
+% these will be used later in the title page
+\title{\bf{Introduction to Types}}
+\author{Zach Schmidt}
+\date{\today}
+
+
+% note: do NOT include a \maketitle line; also note that this title
+% material goes BEFORE the \begin{document}
+
+% have this if you'd like a recurring outline
+%\AtBeginSection[]  % "Beamer, do the following at the start of every section"
+%{
+%\begin{frame}<beamer> 
+%\frametitle{Outline} % make a frame titled "Outline"
+%\tableofcontents[currentsection]  % show TOC and highlight current section
+%\end{frame}
+%}
+\newcommand\Fontvi{\fontsize{7}{7.2}\selectfont}
+
+\begin{document}
+\usebackgroundtemplate{
+  \tikz[overlay,remember picture] 
+  \node[opacity=0.5, at=(current page.south east),anchor=south east,inner sep=0pt] {
+    \includegraphics[width=100px]{figures/imagetrend.jpg}};
+}
+\begin{frame}
+\begin{center}
+Summer Internship 2016
+\maketitle
+\end{center}
+\end{frame}
+
+% \begin{frame}
+% {Table of Contents (optional frame. Can delete.)}
+% \begin{multicols}{2}
+% \tableofcontents
+% \end{multicols}
+% \end{frame}
+
+% I may want some junk from this in the future...
+% \begin{frame}{template frame (delete me)}
+%   \begin{block}{test block}
+%     some text
+%   \end{block}
+%   \begin{varblock}[4cm]{test varblock}
+%     Variable block (here 4cm)
+%   \end{varblock}
+%   \begin{columns}
+%     \begin{column}{.5\linewidth}
+%       \begin{alertblock}{test alert}
+%         some alert
+%       \end{alertblock}
+%     \end{column}
+%     \begin{column}{.5\linewidth}
+%       \begin{exampleblock}{test example}
+%         some example citation \footnotemark
+%       \end{exampleblock}
+%     \end{column}\footnotetext[1]{Auth, DV, 123, 2001.}
+%   \end{columns}
+% \end{frame}
+
+
+\section{Motivation}
+\subsection{What are types?}
+\begin{frame}
+
+
+A \textit{type} is a classification identifying one of various types of data that determines:
+
+\begin{itemize}
+\item the possible values for that type
+\item the operations that can be done on values of that type
+\item the meaning of the data
+\item the way values of that type can be stored
+\end{itemize}
+
+\vspace{2em}Intuitively, we can view this as a \textit{has-a/is-a} relationship:
+\begin{itemize}
+\item A value has-a type
+\item int/string/float/etc. is-a type
+\item A type has-a kind
+\item A kind has-a sort
+\makebox(0,0){\put(0,2.2\normalbaselineskip){%
+               $\left.\rule{0pt}{1.1\normalbaselineskip}\right\}$ Only of academic interest (currently)}}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Simply Typed Lambda Calculus}
+\begin{frame}
+The simply typed lambda calculus (STLC) is the easiest way to see types in action\\
+
+\vspace{2em}Let $B$ be the set of all types $T$ (that is to say, $T$ is a type iff $T \in B$). We can now express the production rules inductively as:
+
+\vspace{-2em}
+\begin{align*}
+\tau &::= \tau \to \tau \ |\ T \\
+e &::= x\ |\ \lambda x:\tau .e\ |\ e\ e\ |\ c
+\end{align*}
+where $x$ is some variable of type $\tau$ and $c$ is a constant\\
+
+\vspace{1.5em}This looks gross, but it's really simply -- the application $(\lambda y. y) x$ becomes $x$ (i.e. you just replace all occurrences of the variable $y$ inside the abstraction with $x$)\\
+
+\vspace{1.5em}We can see now that the type of the abstraction $(\lambda x. x)$ is $\tau \to \tau$\\ 
+\vspace{1.5em}Given anything of type $\tau$, this abstraction returns something of type $\tau$ (the identity function!)\\
+
+\vspace{1.5em}\textbf{Recap:} How many functions are there with type $\tau \to \tau$?
+
+\end{frame}
+
+\subsection{JS as Alternate Lambda Calculus}
+\begin{frame}
+JavaScript is the perfect substitute for lambda calculus, and makes it easy to see how types (could) work\\
+
+\vspace{2em}Let $\tau$ be the set of all JavaScript types \{\texttt{null, undefined, boolean, string, number, object}\}
+
+
+\vspace{2em}We can now see (hopefully) that the `type' of the `function' $x => x$ is $\tau \to \tau$\\ 
+\vspace{2em}Given anything of type $\tau$, this function returns something of type $\tau$ (it's the identity function!)\\
+
+\vspace{2em}\textbf{Recap:} How many functions are there with type $T \to T$, where $T \in \tau$?
+
+\end{frame}
+
+\subsection{Proofs as Programs}
+\begin{frame}
+
+Recall \textit{Modus Ponens}: If all Tuesdays are sunny and today is Tuesday, it is sunny\\
+
+\vspace{1em} More formally, this can be written:\\
+\vspace{-1em}
+\begin{prooftree}
+  \AxiomC{$A \to B$}
+  \AxiomC{$A$}
+  \BinaryInfC{$B$}
+\end{prooftree}
+
+What if we have some variable $a$ of type $A$ and some function $A\to B$?\\
+
+\vspace{1em}Well... we can conclude that after an application of the function we will be guaranteed to have something of type $B$... we now have \textit{modus ponens}!\\
+
+\vspace{2em}It turns out that the \textit{Curry-Howard Isomorphism} says that there is a direct relationship between computer programs and mathematical proofs\\
+
+\vspace{2em}This isomorphism blurs the lines between mathematical logic and computer science
+\end{frame}
+
+\subsection{Formal Verification}
+\begin{frame}
+The ability to view a program as a mathematical proof allows one to \textit{literally} prove their programs will work as expected\\
+
+\vspace{2em}This can be contrasted with the (infinitely) less formal method of QA by various inputs\\
+
+\vspace{2em}I can hear the argument \textit{``this is cute and all, but it has no purpose in the `real world' ''}\\
+
+\vspace{2em}If you like your nukes to only explode when you want them to, you'd better verify the program!
+
+\vspace{1em}The driverless control system for the Paris metro was proven correct using an automated theorem prover\footnote{\url{http://www.prover.com/company/press/view/?id=47}}\\
+
+\vspace{1em}Many DOE\footnote{\url{http://energy.gov/sites/prod/files/2013/06/f1/O-425-1D\_ssm.pdf}}/DARPA\footnote{\url{https://dl.acm.org/citation.cfm?id=581775}}/NASA\footnote{\url{https://www.cs.utexas.edu/users/ObjectCheck/pubs/FASE2001.pdf}} projects need to be formally verified to meet certification standards
+
+\end{frame}
+
+\subsection{Type Systems}
+\begin{frame}
+
+Typed vs. Untyped
+\begin{description}
+\item[Typed] The language distinguishes types 
+\item[Untyped] Everything is simply a stream of bits (assembly)
+\end{description}
+
+
+Static vs. Dynamic
+\begin{description}
+\item[Static] The language enforces types before run-time (typically at compile time)
+\item[Dynamic] The type is determined at run-time
+\end{description}
+
+
+Weak vs. Strong
+\begin{description}
+\item[Weak] Allows one type to be treated as another (e.g. a string can be seen as a number)
+\item[Strong] Prevents the above; an attempt to perform an operation on the wrong type raises an error
+\end{description}
+
+
+\end{frame}
+
+
+\section{Ruining a Type System}
+\subsection{Implicit Typing in C\# 3.0}
+\begin{frame}
+
+C\# 3.0 included the ability to let the compiler provide the (explicit) type during compilation.\\
+\vspace{2em}This is just \textit{syntactic sugar}, and has no effect on performance.
+
+\vspace{2em}
+\begin{alertblock}{Disclaimer}
+Implicit typing will \textit{never} introduce an error by itself, but it makes it \textit{exceedingly easy} to have a typo result in undefined behavior!
+\end{alertblock}
+
+\end{frame}
+
+\subsection{When to use implicit typing}
+\begin{frame}[fragile]
+When looking at the release history of C\#, implicit typing appeared at the same time as query expressions, lambda expressions, and anonymous types.
+
+\vspace{2em}The first two can be seen as special cases of the third:
+
+\begin{verbatim}
+var empEnumerable = from emp in employees
+                       where emp.age > 50
+                       select emp; 
+\end{verbatim}
+
+
+\begin{verbatim}
+var filterEnumerable = empEnumerable.Where(e => e.age > 50); 
+\end{verbatim}
+
+
+\begin{verbatim}
+var employee = new { name = "testName", age = 30 }
+\end{verbatim}
+
+\end{frame}
+
+\subsection{When to maybe use implicit typing}
+\begin{frame}[fragile]
+Due to the lack of \textit{true} type inference, C\# very quickly gives up when writing many lambda expressions.\\ 
+
+\vspace{2em}For example, the most basic of all lambda expressions cannot be implicitly typed:
+
+\begin{verbatim}
+//Error due to unknown RHS
+var id = x => x;
+\end{verbatim}
+
+Return types from functions -- provides looser coupling, relies on perfectly named functions:
+
+\begin{verbatim}
+//Nobody knows what type this is
+var returnVar = getStuff();
+
+//Loose coupling achieved
+var employee = getEmployeeById();
+\end{verbatim}
+
+Additionally, anonymous implicitly typed (primitive) lists should be avoided, for reasons that will be made clear on the next slide.
+
+
+\end{frame}
+
+\subsection{When to NOT use implicit typing}
+\begin{frame}[fragile]
+
+When the variable is a primitive, never (!!) use an implicit type:
+\begin{itemize}
+\item \begin{verbatim} var myFloat = 100; \end{verbatim}
+\item \begin{verbatim} var saleAmount = 100.0; \end{verbatim}
+\item \begin{verbatim} var enterpriseGUID = ` '; \end{verbatim}
+\end{itemize}
+
+\end{frame}
+
+
+\section{JavaScript}
+\subsection{What JavaScript Is}
+\begin{frame}[fragile]
+
+JavaScript is a typed\footnote{Want to read arguments all day? \url{https://stackoverflow.com/questions/964910/is-javascript-an-untyped-language}}, dynamically, weakly\footnote{This is not strictly true, but implicit casting is rampant} typed language\\
+
+\vspace{2em}The above means that JavaScript is (perhaps) the best golfing language around... where else could you do the following (?!):
+
+\begin{verbatim}
+var a = "30";
+var b = "40";
+var c = a- -b;
+\end{verbatim}
+
+\textbf{Recap:} What is \texttt{c}?
+\end{frame}
+
+\subsection{What JavaScipt Isn't}
+\begin{frame}
+JavaScript \textit{isn't} the worlds best language at preventing run-time errors...\\
+
+\vspace{2em}Anyone who has programmed more than 100 lines of JS knows that\\
+
+\vspace{2em}Unfortunately, when JS encounters a run-time error, it frequently fails silently\footnote{\url{https://opensourcehacker.com/2008/08/19/catching-silent-javascript-exceptions-with-a-function-decorator/}}\\
+
+\vspace{2em}I have tons of ideas for better JavaScript error handling\footnote{In the meantime, this is the best source: \url{https://developer.chrome.com/devtools}}, but time is an issue...
+\end{frame}
+
+
+
+\section{Vanilla TypeScript}
+\subsection{What TypeScript is}
+\begin{frame}
+TypeScript is a strict superset of JavaScript\\
+\hspace{4em}(i.e. every JavaScript file is a valid TypeScript file)\\
+\vspace{2em}Allows type annotations\\
+\vspace{2em}Compiles down to normal JavaScript\\
+\hspace{4em}erases types... becomes default JavaScript runtime type checks\\
+\vspace{2em}Developed by the same fella who was the lead architect for C\#
+\end{frame}
+
+\subsection{Static Typing in TypeScript}
+\begin{frame}[fragile]
+
+TypeScript by default allows you to catch `silly' mistakes
+
+\begin{verbatim}
+var name: string = "bob";
+function warnUser(): void {
+    alert("This is my warning message");
+}
+interface ClockInterface {
+    currentTime: Date;
+}
+class Clock implements ClockInterface  {
+    currentTime: Date;
+    constructor(h: number, m: number) { }
+}
+
+\end{verbatim}
+
+\end{frame}
+
+\subsection{What TypeScript isn't}
+\begin{frame}
+TypeScript is intentionally \textit{unsound}, because all types are erased after compilation\\
+
+\vspace{2em}Recall that a \textit{sound} type system is one that rejects all ``bad'' programs\\
+
+\begin{quotation}
+``typeful programs may be easier to write and maintain, but their type annotations do not prevent runtime errors'' \footnote{\url{https://www.cs.umd.edu/~aseem/safets.pdf}}
+\end{quotation}
+
+
+\end{frame}
+
+\subsection{Dynamic Type Errors Still Exist}
+\begin{frame}[fragile]
+
+\begin{verbatim}
+class Animal {}
+class Snake extends Animal {
+    slither() {
+        alert("Slithering!")
+    }
+}
+class Horse extends Animal {}
+
+var a: Snake[] = [new Snake()];
+var b: Animal[] = a;
+b[0] = new Horse();
+var notASnake: Snake = a[0];
+notASnake.slither();  
+\end{verbatim}
+\textcolor{myRed}{\texttt{Uncaught TypeError: notASnake.slither is not a function}}
+
+\end{frame}
+
+
+\section{Gradual Typing}
+\subsection{Combating Unsoundness}
+\begin{frame}[fragile]
+
+This leads to some sad programming practices when using TypeScript
+
+\begin{verbatim}
+function f(s:string):number{
+  if(typeof s !== "string")
+    return -1;
+...
+}
+\end{verbatim}
+
+The programmer must still check that the argument is indeed a \texttt{string}
+
+
+\end{frame}
+
+\subsection{Safe TypeScript}
+\begin{frame}
+To prevent this additional burden on the programmer that run-time checks impose, Microsoft research created the ``Safe TypeScript'' package\footnote{Available here: \url{https://github.com/nikswamy/SafeTypeScript}}\\
+
+
+\vspace{2em}When the \texttt{--safe} flag is added to the TypeScript compiler, it performs two passes over the code:
+\begin{enumerate}
+\item The normal static type checking is performed (vanilla TypeScript)
+\item Dynamic type checking is added via runtime checks based on RTTI (runtime type information)... Safe TypeScript!
+\end{enumerate}
+\end{frame}
+
+\subsection{Type Safety in TypeScript}
+\begin{frame}
+When the \texttt{--safe} flag is used, TypeScript becomes type safe in the following regards\footnote{There are a host of other benefits/features, I discuss these in a more advanced talk here: \url{https://goo.gl/QKXqVe}}:
+\begin{itemize}
+\item copying instances of classes via \texttt{checkAndTag()}
+\item accessing members of classes via \texttt{readField()}
+\item altering members of classes via \texttt{writeField()}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Performance of Type Safety}
+\begin{frame}
+Using the \texttt{--safe} flag \textit{does} incur a slowdown\footnote{There is another method of dynamic type checking called RTTI-on-creation which has a slowdown of 1.4 - 3x} of ~15\%\\
+
+\vspace{2em}It's therefore up to the designer to determine whether they are willing to trade performance for type safety
+\end{frame}
+
+\section{End Notes}
+\subsection{Philosophy And Types}
+\begin{frame}
+Who are types for? The editor? The compiler? You?\\
+
+
+\vspace{2em} If you dig into type theory, this question comes up often -- should we use types to increase code readability, allow proofs of correctness, better encapsulate business logic?
+
+\vspace{2em} I \textit{love} to discuss the philosophical implications of types...
+
+\end{frame}
+
+\subsection{Formal Logic}
+\begin{frame}
+If you were \textit{really} paying attention, you might be asking \textit{``where does first order logic fall into the Curry-Howard Isomorphism?''}\\
+
+\vspace{1em}If we want to say $\forall A, A\to \tau$, we need to be able to vary over all types $A$... this is polymorphism!\\
+
+\vspace{1em}What about the existential quantifier? That's encapsulation! $\exists A, A \to \tau$ means that there is some type $A$ (that we don't care about) which will produce some $\tau$\footnote{\url{https://www.cs.cornell.edu/courses/cs6110/2013sp/lectures/lec37-sp13.pdf}}
+\end{frame}
+
+\subsection{Dependent Types}
+\begin{frame}
+Recall the CH-Isomorphism stated that we can treat proofs as programs... but this said nothing of the value\\
+
+\vspace{2em}That is, we can say that we know some program will produce an integer, but it does not allow us to say it will produce a \textit{valid} integer\\
+
+\vspace{2em}There has been an (academic) effort\footnote{\url{http://goto.ucsd.edu/~ravi/research/oopsla12-djs.pdf}} to produce a variant of JavaScript which is \textit{dependently typed}, which means that we could say a given program will produce an integer between $x$ and $y$, for example
+\end{frame}
+
+\subsection{Type Inference}
+\begin{frame}
+I mentioned that C\# doesn't have type inference...\\
+
+\vspace{2em}Most languages which have type inference use the Hindley-Milner type system:
+\begin{quotation}
+\noindent Among HM's more notable properties is completeness and its ability to deduce the most general type of a given program without the need of any type annotations or other hints supplied by the programmer
+\end{quotation}
+
+This is typically implemented using \textit{Algorithm W} (but it's usually only found in functional languages)
+
+\end{frame}
+
+
+\section{Further Reading}
+\begin{frame}
+
+\begin{description}
+\item[Discussion regarding formal verification:] \url{http://c2.com/cgi/wiki?ProofsCantProveTheAbsenceOfBugs}
+
+\item[Free book on languages:] \url{http://cs.brown.edu/courses/cs173/2012/book/book.pdf}
+
+\item[Really good StackOverflow answer about value/type/kind:] \url{http://programmers.stackexchange.com/a/255928}
+
+\item[Off the deep end with the Curry-Howard Isomorphism:] \url{http://disi.unitn.it/~bernardi/RSISE11/Papers/curry-howard.pdf}
+
+\item[Intro to Type Theory:] \url{http://www.cs.ru.nl/~herman/onderwijs/provingwithCA/paper-lncs.pdf}
+
+\item[TypeScript Tutorial:] \url{https://www.typescriptlang.org/docs/tutorial.html}
+
+\end{description}
+
+
+\end{frame}
+
+
+\end{document}
